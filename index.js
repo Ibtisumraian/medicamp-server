@@ -28,7 +28,26 @@ async function run() {
         const campsCollection = client.db('mediCampDB').collection('camps')
 
 
-        
+      app.post('/camps', async (req, res) => {
+          try {
+            const campData = req.body;
+
+            // Optional validation
+            if (!campData.name || !campData.imageUrl || !campData.sortingTime) {
+              return res.status(400).json({ error: 'Missing required fields' });
+            }
+
+            const result = await campsCollection.insertOne(campData);
+
+            res.status(201).json({
+              message: 'Camp added successfully',
+              insertedId: result.insertedId,
+            });
+          } catch (error) {
+            console.error('Error inserting camp:', error);
+            res.status(500).json({ error: 'Failed to insert camp' });
+          }
+      });
 
 
         // await client.db("admin").command({ ping: 1 });
