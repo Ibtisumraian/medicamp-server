@@ -26,6 +26,7 @@ async function run() {
         // await client.connect();
 
         const campsCollection = client.db('mediCampDB').collection('camps')
+        const usersCollection = client.db('mediCampDB').collection('users')
 
 
       app.post('/camps', async (req, res) => {
@@ -48,6 +49,38 @@ async function run() {
             res.status(500).json({ error: 'Failed to insert camp' });
           }
       });
+
+
+      app.post('/users', async (req, res) => {
+        try {
+          const usersData = req.body;
+          const email = usersData.email;
+
+          if (!email) {
+            return res.status(400).json({ error: 'Email is required' });
+          }
+
+          const existingUser = await usersCollection.findOne({ email });
+
+          if (existingUser) {
+            return res.status(409).json({ 
+              message: 'User already exists',
+              userId: existingUser._id 
+            });
+          }
+
+          const result = await usersCollection.insertOne(usersData);
+
+          res.status(201).json({
+            message: 'User added successfully',
+            insertedId: result.insertedId,
+          });
+        } catch (error) {
+          console.error('Error inserting user:', error);
+          res.status(500).json({ error: 'Failed to insert user' });
+        }
+      });
+
 
 
         // await client.db("admin").command({ ping: 1 });
