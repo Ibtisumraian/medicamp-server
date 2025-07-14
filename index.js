@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors())
 app.use(express.json())
@@ -61,6 +61,44 @@ async function run() {
           res.status(500).json({ error: 'Failed to retrieve camps' });
         }
       });
+
+
+
+      app.get('/camps/:id', async (req, res) => {
+        const id = req.params.id;
+
+        try {
+          const query = { _id: new ObjectId(id) };
+          const result = await campsCollection.findOne(query);
+
+          if (!result) {
+            return res.status(404).json({ error: 'Item not found' });
+          }
+
+          res.status(200).json(result);
+        } catch (error) {
+          console.error('Error fetching item by ID:', error);
+          res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+
+
+
+        app.put('/update-camp/:id', async (req, res) => {
+          try {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedCamp = req.body;
+
+            const updateDoc = { $set: updatedCamp };
+
+            const result = await campsCollection.updateOne(filter, updateDoc);
+            res.send(result);
+          } catch (err) {
+            console.error('Error updating camp:', err);
+            res.status(500).send({ error: 'Failed to update camp' });
+          }
+        });
 
 
 
