@@ -51,6 +51,19 @@ async function run() {
       });
 
 
+      app.get('/camps', async (req, res) => {
+        try {
+          const camps = await campsCollection.find().toArray();
+
+          res.status(200).json(camps);
+        } catch (error) {
+          console.error('Error retrieving camps:', error);
+          res.status(500).json({ error: 'Failed to retrieve camps' });
+        }
+      });
+
+
+
       app.post('/users', async (req, res) => {
         try {
           const usersData = req.body;
