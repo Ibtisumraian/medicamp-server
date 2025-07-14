@@ -99,6 +99,30 @@ async function run() {
             res.status(500).send({ error: 'Failed to update camp' });
           }
         });
+      
+      
+      app.delete('/delete-camp/:id', async (req, res) => {
+        try {
+          const id = req.params.id;
+
+          if (!ObjectId.isValid(id)) {
+            return res.status(400).send({ error: 'Invalid ID format' });
+          }
+
+          const query = { _id: new ObjectId(id) };
+          const result = await campsCollection.deleteOne(query);
+
+          if (result.deletedCount === 0) {
+            return res.status(404).send({ error: 'Item not found' });
+          }
+
+          res.send({ message: 'Item deleted successfully', result });
+        } catch (error) {
+          console.error('Delete error:', error);
+          res.status(500).send({ error: 'Server error during deletion' });
+        }
+      });
+
 
 
 
