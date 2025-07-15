@@ -157,6 +157,21 @@ async function run() {
       });
 
 
+      app.get('/users/:email', async (req, res) => {
+        try {
+          const email = req.params.email
+          const query = { email: email };
+          const users = await usersCollection.find(query).toArray();
+
+          res.status(200).json(users);
+        } catch (error) {
+          console.error('Error retrieving users:', error);
+          res.status(500).json({ error: 'Failed to retrieve users' });
+        }
+      });
+
+
+
 
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
