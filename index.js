@@ -27,8 +27,10 @@ async function run() {
 
         const campsCollection = client.db('mediCampDB').collection('camps')
         const usersCollection = client.db('mediCampDB').collection('users')
+        const participantCollection  = client.db('mediCampDB').collection('participant')
+        const feedbackCollection  = client.db('mediCampDB').collection('feedback')
 
-
+      // * All operations for camps
       app.post('/camps', async (req, res) => {
           try {
             const campData = req.body;
@@ -125,7 +127,7 @@ async function run() {
 
 
 
-
+      // * All operation for users
       app.post('/users', async (req, res) => {
         try {
           const usersData = req.body;
@@ -167,6 +169,28 @@ async function run() {
         } catch (error) {
           console.error('Error retrieving users:', error);
           res.status(500).json({ error: 'Failed to retrieve users' });
+        }
+      });
+
+
+      // participantData.registeredAt = new Date();
+      // * All operations for participants
+      app.post('/participants', async (req, res) => {
+        try {
+          const participantData = req.body;
+          const result = await participantCollection.insertOne(participantData);
+
+          res.status(201).json({
+            message: 'Participant registered successfully',
+            insertedId: result.insertedId,
+          });
+
+        } catch (error) {
+          console.error('Error registering participant:', error);
+          res.status(500).json({
+            message: 'Internal Server Error',
+            error: error.message,
+          });
         }
       });
 
@@ -369,7 +393,8 @@ app.get('/', (req, res) => {
         </div>
 
         <h2>API Guide</h2>
-        <p>To interact with the API, use a client like <code>camps</code> <code>Postman</code> <code>Insomnia</code> or <code>cURL</code> .</p>
+        <p>The API <code>https://medicamp-server-three.vercel.app</code></p>
+        <p>To interact with the API, use a client like <code>/camps</code> <code>/camps/:id</code> <code>/users</code>  <code>/users/:email</code> .</p>
         <p>Start by fetching all available camps via the <code>GET /camps</code> endpoint.</p>
 
         <div class="footer">
