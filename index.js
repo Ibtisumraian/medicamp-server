@@ -219,6 +219,35 @@ async function run() {
         }
       });
 
+
+      
+
+    app.delete('/participants/delete/:id', async (req, res) => {
+      const id = req.params.id;
+
+      try {
+        const query = { _id: new ObjectId(id) };
+        const result = await participantCollection.deleteOne(query);
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ message: 'Participant not found or already deleted.' });
+        }
+
+        res.status(200).json({
+          message: 'Participant successfully deleted.',
+          deletedId: id,
+        });
+
+      } catch (error) {
+        console.error('Error deleting participant:', error);
+        res.status(500).json({
+          message: 'Internal server error while deleting participant.',
+          error: error.message,
+        });
+      }
+    });
+
+
       
       
 
