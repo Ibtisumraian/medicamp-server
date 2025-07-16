@@ -4,6 +4,8 @@ require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIP_KEY);
 
 app.use(cors())
 app.use(express.json())
@@ -247,11 +249,52 @@ async function run() {
       }
     });
 
+      
+      app.patch('/participants/payment/:id', async (req, res) => {
+        const { id } = req.params;
+        const data = req.body;
+
+        try {
+          const result = await participantCollection.updateOne(
+            { _id: new ObjectId(id) },
+            {
+              $set: {
+                isPayment_confirmed: true,
+                isPayment_pending: false,
+                data
+              },
+            }
+          );
+          res.send(result);
+        } catch (error) {
+          res.status(500).json({ message: 'Payment update failed', error: error.message });
+        }
+      });
 
       
       
 
+      
+      app.post('/create-payment-intent', async (req, res) => {
+        const { amount } = req.body;
 
+        try {
+          const paymentIntent = await stripe.paymentIntents.create({
+            amount: parseInt(amount * 100), 
+            currency: 'usd',
+            payment_method_types: ['card'],
+          });
+
+          res.send({
+            clientSecret: paymentIntent.client_secret,
+          });
+        } catch (error) {
+          console.error('Error creating payment intent:', error);
+          res.status(500).send({ error: error.message });
+        }
+      });
+
+      
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
