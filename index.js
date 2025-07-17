@@ -1,14 +1,38 @@
 const express = require('express');
 const cors = require('cors');
 const app = express()
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const Stripe = require('stripe');
 require('dotenv').config()
 const stripe = Stripe(process.env.STRIP_KEY);
 
-app.use(cors())
+app.use(cors({
+  origin: ['http://localhost:5173','https://medicamp-ce784.web.app' ],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+}))
 app.use(express.json())
+
+
+
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) return res.status(401).send({ message: 'Unauthorized' });
+
+  const token = authHeader.split(' ')[1];
+  console.log(token);
+  
+
+  jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
+    if (err) return res.status(403).send({ message: 'Forbidden' });
+
+    req.decoded = decoded; 
+    next();
+  });
+};
+
 
 
 
@@ -31,6 +55,18 @@ async function run() {
         const usersCollection = client.db('mediCampDB').collection('users')
         const participantCollection  = client.db('mediCampDB').collection('participant')
         const feedbackCollection  = client.db('mediCampDB').collection('feedback')
+
+      
+      
+      // * JWT      
+      app.post('/jwt', async (req, res) => {
+        const user = req.body; 
+        const token = jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: '1h' });
+        res.send({ token });
+      });
+
+
+
 
       // * All operations for camps
       app.post('/camps', async (req, res) => {
@@ -68,7 +104,7 @@ async function run() {
 
 
 
-      app.get('/camps/:id', async (req, res) => {
+      app.get('/camps/:id', verifyToken, async (req, res) => {
         const id = req.params.id;
 
         try {
@@ -88,7 +124,7 @@ async function run() {
 
 
 
-        app.put('/update-camp/:id', async (req, res) => {
+        app.put('/update-camp/:id', verifyToken, async (req, res) => {
           try {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -106,7 +142,7 @@ async function run() {
       
       
       
-      app.patch('/camps/participantCount/:id', async (req, res) => {
+      app.patch('/camps/participantCount/:id', verifyToken, async (req, res) => {
         const { id } = req.params;
 
         try {
@@ -130,7 +166,7 @@ async function run() {
 
       
       
-      app.delete('/delete-camp/:id', async (req, res) => {
+      app.delete('/delete-camp/:id', verifyToken, async (req, res) => {
         try {
           const id = req.params.id;
 
@@ -155,7 +191,7 @@ async function run() {
 
 
       // * All operation for users
-      app.post('/users', async (req, res) => {
+      app.post('/users', verifyToken, async (req, res) => {
         try {
           const usersData = req.body;
           const email = usersData.email;
@@ -186,7 +222,7 @@ async function run() {
       });
 
 
-      app.get('/users/:email', async (req, res) => {
+      app.get('/users/:email', verifyToken, async (req, res) => {
         try {
           const email = req.params.email
           const query = { email: email };
@@ -202,7 +238,7 @@ async function run() {
 
       // participantData.registeredAt = new Date();
       // * All operations for participants
-      app.post('/participants', async (req, res) => {
+      app.post('/participants', verifyToken, async (req, res) => {
         try {
           const participantData = req.body;
           const result = await participantCollection.insertOne(participantData);
@@ -223,7 +259,7 @@ async function run() {
 
 
 
-      app.get('/participants', async (req, res) => {
+      app.get('/participants', verifyToken, async (req, res) => {
         try {
           const participants = await participantCollection.find().toArray();
 
@@ -235,9 +271,9 @@ async function run() {
       });
 
 
-      
 
-      app.get('/participants/email/:email', async (req, res) => {
+
+      app.get('/participants/email/:email', verifyToken, async (req, res) => {
         try {
           const email = req.params.email;
 
@@ -260,9 +296,9 @@ async function run() {
       });
 
 
-      
 
-    app.delete('/participants/delete/:id', async (req, res) => {
+
+    app.delete('/participants/delete/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
 
       try {
@@ -288,7 +324,7 @@ async function run() {
     });
 
       
-      app.patch('/participants/payment/:id', async (req, res) => {
+      app.patch('/participants/payment/:id', verifyToken, async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
@@ -313,7 +349,7 @@ async function run() {
 
       // * All Operation for feedback
       
-      app.post('/feedback', async (req, res) => {
+      app.post('/feedback', verifyToken, async (req, res) => {
         try {
           const data = req.body;
 
