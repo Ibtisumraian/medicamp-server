@@ -271,10 +271,33 @@ async function run() {
         }
       });
 
+
+
+      // * All Operation for feedback
+      
+      app.post('/feedback', async (req, res) => {
+        try {
+          const data = req.body;
+
+          const result = await feedbackCollection.insertOne(data);
+
+          res.status(201).json({
+            message: 'Feedback submitted successfully.',
+            insertedId: result.insertedId,
+          });
+        } catch (error) {
+          console.error('Error submitting feedback:', error);
+          res.status(500).json({
+            message: 'Internal server error while submitting feedback.',
+            error: error.message,
+          });
+        }
+      });
+
       
       
 
-      
+      // * Operation for Payment Gateway
       app.post('/create-payment-intent', async (req, res) => {
         const { amount } = req.body;
 
