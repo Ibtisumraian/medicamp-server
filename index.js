@@ -124,6 +124,13 @@ async function run() {
 
 
 
+    app.get('/TopCamps', async (req, res) => {
+      const topRecipes = await campsCollection.find().sort({ participantCount: -1 }).limit(6).toArray();
+      res.send(topRecipes);
+    });
+
+
+
         app.put('/update-camp/:id', verifyToken, async (req, res) => {
           try {
             const id = req.params.id;
@@ -365,6 +372,19 @@ async function run() {
             message: 'Internal server error while submitting feedback.',
             error: error.message,
           });
+        }
+      });
+
+
+
+      app.get('/feedbacks', async (req, res) => {
+        try {
+          const feedback = await feedbackCollection.find().toArray();
+
+          res.status(200).json(feedback);
+        } catch (error) {
+          console.error('Error retrieving feedbacks:', error);
+          res.status(500).json({ error: 'Failed to retrieve feedbacks' });
         }
       });
 
