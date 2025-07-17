@@ -221,6 +221,20 @@ async function run() {
         }
       });
 
+
+
+      app.get('/participants', async (req, res) => {
+        try {
+          const participants = await participantCollection.find().toArray();
+
+          res.status(200).json(participants);
+        } catch (error) {
+          console.error('Error retrieving participants:', error);
+          res.status(500).json({ error: 'Failed to retrieve participants' });
+        }
+      });
+
+
       
 
       app.get('/participants/email/:email', async (req, res) => {
