@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const Stripe = require('stripe');
+require('dotenv').config()
 const stripe = Stripe(process.env.STRIP_KEY);
 
 app.use(cors())
@@ -105,6 +105,31 @@ async function run() {
         });
       
       
+      
+      app.patch('/camps/participantCount/:id', async (req, res) => {
+        const { id } = req.params;
+
+        try {
+          const result = await campsCollection.updateOne(
+            { _id: new ObjectId(id) },
+            {
+              $inc: { participantCount: 1 }
+            }
+          );
+
+          res.status(200).json({
+            message: 'Participant count updated successfully',
+            modifiedCount: result.modifiedCount,
+          });
+        } catch (error) {
+          console.error('Error updating participant count:', error);
+          res.status(500).json({ message: 'Failed to update participant count', error: error.message });
+        }
+      });
+
+
+      
+      
       app.delete('/delete-camp/:id', async (req, res) => {
         try {
           const id = req.params.id;
@@ -196,8 +221,7 @@ async function run() {
         }
       });
 
-
-
+      
 
       app.get('/participants/email/:email', async (req, res) => {
         try {
