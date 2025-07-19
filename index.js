@@ -198,7 +198,7 @@ async function run() {
 
 
       // * All operation for users
-      app.post('/users', verifyToken, async (req, res) => {
+      app.post('/users', async (req, res) => {
         try {
           const usersData = req.body;
           const email = usersData.email;
@@ -288,9 +288,9 @@ async function run() {
             .find({ participant_email: email })
             .toArray();
 
-          if (participants.length === 0) {
-            return res.status(404).json({ message: 'No participants found for this email' });
-          }
+          // if (participants.length === 0) {
+          //   return res.status(404).json({ message: 'No participants found for this email' });
+          // }
 
           res.status(200).json(participants);
         } catch (error) {
