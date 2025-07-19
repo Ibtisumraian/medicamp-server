@@ -1,13 +1,13 @@
 # MediCamp - Medical Camp Management System - Server
 
-This is the **backend server** for the Medical Camp Management System (MCMS), built using **Node.js**, **Express.js**, **MongoDB**, and **JWT** for authentication and authorization. It handles RESTful API endpoints to manage camps, users, registrations, roles, feedback, and payment intents.
+This is the **backend server** for the Medical Camp Management System (MediCamp), built using **Node.js**, **Express.js**, **MongoDB**, and **JWT** for authentication and authorization. It handles RESTful API endpoints to manage camps, users, registrations, roles, feedback, and payment intents.
 
 ---
 
 ##  Live Links
 
--  **Frontend Repository:** [MCMS Frontend](https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-Ibtisumraian)
--  **Backend Repository:** [MCMS Server](https://github.com/Programming-Hero-Web-Course4/b11a12-server-side-Ibtisumraian)
+-  **Frontend Repository:** [MediCamp Frontend](https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-Ibtisumraian)
+-  **Backend Repository:** [MediCamp Server](https://github.com/Programming-Hero-Web-Course4/b11a12-server-side-Ibtisumraian)
 -  **Live Server URL:** `https://medicamp-server-three.vercel.app`
 
 ---
