@@ -6,8 +6,8 @@ This is the **backend server** for the Medical Camp Management System (MediCamp)
 
 ##  Live Links
 
--  **Frontend Repository:** [MediCamp Frontend](https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-Ibtisumraian)
--  **Backend Repository:** [MediCamp Server](https://github.com/Programming-Hero-Web-Course4/b11a12-server-side-Ibtisumraian)
+-  **Frontend Repository:** [MediCamp Frontend](https://github.com/Ibtisumraian/medicamp)
+<!-- -  **Backend Repository:** [MediCamp Server](https://github.com/Ibtisumraian/medicamp-server) -->
 -  **Live Server URL:** `https://medicamp-server-three.vercel.app`
 
 ---
